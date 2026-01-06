@@ -1,0 +1,135 @@
+
+{% include "index.html" %}
+{% block content %}
+
+<div class="backg" style=" background: linear-gradient(135deg, #1d3945, #12242a, #1d3854); padding: 10px; border-radius: 10px;">
+
+  <div class="container mb-5 justify-content-center d-flex mt-3" >
+    <div class="card shadow-lg " style="width: 50rem;">
+      <div class="card-header bg-primary text-white text-center">
+        <h3>Travel Booking Form</h3>
+      </div>
+
+      <div class="card-body" >
+        <form method="post">
+          {% csrf_token %}
+
+          <!-- Full Name -->
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" placeholder="Enter your full name" required>
+          </div>
+
+          <!-- Address -->
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <input type="text" class="form-control" placeholder="Enter your address" required>
+          </div>
+
+          <!-- Phone -->
+          <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" placeholder="+8801XXXXXXXXX" required>
+          </div>
+
+          <!-- Destination -->
+          <div class="mb-3">
+            <label class="form-label" >Destination</label>
+            {% comment %} <input type="text" class="form-control" id="destination" name="destination" placeholder="Enter destination" required> {% endcomment %}
+            <select class="form-select" required>
+              <option value="">Select destination</option>
+              <option>Sajek Valley</option>
+              <option>Cox's Bazar</option>
+              <option>Sundarban</option>
+              <option>Camping</option>
+              <option>Rangamati</option>
+              <option>Sylhet</option>
+              <option>Tour</option>
+              <option>Bandarban Trakking</option>
+              <option>Bandarban</option>
+            </select>
+          </div>
+
+          <!-- Travel Date -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Travel Date</label>
+              <input type="date" class="form-control" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Return Date</label>
+              <input type="date" class="form-control">
+            </div>
+          </div> 
+
+          {% comment %} <!----------------------------------------      Guest    -----------------------> {% endcomment %}
+           <div class="row">
+            <div class=" col-6 mb-3">
+              <label class="form-label">Guest</label>
+              <input type="number" class="form-control" id="guest" name="guest" min="1" max="20" value="1" required>
+            </div>
+
+            <div class=" col-6 mb-3">
+              <label class="form-label">Price</label>
+              <input type="number" class="form-control" name="price" id="price" required>
+            </div>
+          </div> 
+
+          <!-- Message -->
+          <div class="mb-3">
+            <label class="form-label">Special Request</label>
+            <textarea class="form-control" rows="3" placeholder="Any special requirements?"></textarea>
+          </div> 
+
+          <!-- Submit -->
+          <div class="text-center">
+            <button type="submit" class="btn btn-success btn-lg">
+              Book Now
+            </button>
+            <a href="{% url 'travel_card' %}" class="btn btn-secondary btn-lg">Back</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  // All cards
+  document.querySelectorAll(".card-select").forEach(card => {
+    card.addEventListener("click", function() {
+      // Get data attributes
+      const destination = card.getAttribute("data-destination");
+      const pricePerPerson = parseInt(card.getAttribute("data-price"));
+
+      // Fill form
+      const destinationInput = document.getElementById("destination");
+      const priceInput = document.getElementById("price");
+      const guestInput = document.getElementById("guest");
+
+      destinationInput.value = destination;
+
+      // Calculate total price
+      const guests = parseInt(guestInput.value) || 1;
+      priceInput.value = pricePerPerson * guests;
+
+      // Listen to guest input change to update price dynamically
+      guestInput.addEventListener("input", function() {
+        const numGuests = parseInt(guestInput.value) || 1;
+        priceInput.value = pricePerPerson * numGuests;
+      });
+
+      // Scroll to form
+      destinationInput.scrollIntoView({behavior: "smooth"});
+    });
+  });
+
+});
+</script>
+
+{% endblock %}

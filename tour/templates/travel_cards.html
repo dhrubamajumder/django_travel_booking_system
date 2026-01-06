@@ -1,0 +1,24 @@
+{% extends 'boot.html' %}
+{% block content %}
+
+{% load static %}
+{% for d in destinations %}
+<div class="card shadow" style="width: 30rem;">
+  
+  {% if d.image %}
+    <img src="{{ d.image.url }}" class="card-img-top" alt="{{ d.name }}">
+  {% endif %}
+
+  <div class="card-body">
+    <h2>{{ d.name }}</h2>
+    <p><b>{{ d.seats }} Seats Available</b></p>
+    <h3>৳{{ d.price }}</h3>
+
+    <a href="{% url 'forms' %}?id={{ d.id }}" class="btn btn-outline-dark"> <i class="bi bi-plus-lg"></i> </a>
+  </div>
+</div>
+{% empty %}
+<p>No destinations found.</p>
+{% endfor %}
+
+{% endblock %}
