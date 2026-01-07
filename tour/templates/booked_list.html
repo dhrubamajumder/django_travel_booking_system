@@ -1,0 +1,29 @@
+{% include "index.html" %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">📌 Your Booked Trips</h2>
+
+  <div class="row">
+    {% for b in bookings %}
+      <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+          {% if b.destination.image %}
+            <img src="{{ b.destination.image.url }}" class="card-img-top">
+          {% endif %}
+          <div class="card-body">
+            <h4>{{ b.destination.name }}</h4>
+            <p><b>Name:</b> {{ b.full_name }}</p>
+            <p><b>Guests:</b> {{ b.guest }}</p>
+            <p><b>Total Price:</b> ৳{{ b.total_price }}</p>
+            <p><b>Date:</b> {{ b.booked_at|date:"d M Y" }}</p>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center">No bookings yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

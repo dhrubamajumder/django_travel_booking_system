@@ -1,5 +1,5 @@
 {% include 'index.html' %}
-{% block content %}    
+{% block content %}
 
 {% load static %}
 
@@ -71,8 +71,8 @@
     </div>
   </div>
 </section>
+
 <section id="events">
-  <!-- -----------------   Start grid section   ------------------>
   <div class="content m-4">
       <h1 class="text-center" style="color: rgb(3, 3, 142);">Popular Destinations</h1><hr>
     <div class="row">
@@ -89,7 +89,12 @@
                 <div class="col-8"><i class="bi bi-clock"></i> {{ d.days }}</div>
                 <div class="col-4"><i class="bi bi-calendar"></i> {{ d.travel_date|date:"d M Y" }}</div>
                 <div class="col-10" style="font-family: 'Poppins', sans-serif;"><h3><b>৳{{ d.price }}</b></h3></div>
-                <div class="col-2"><a href="{% url 'forms' %}" class="btn btn-outline-dark"> <i class="bi bi-plus-lg"></i> </a></div>
+                <!-- Updated link: add .select-destination class -->
+                <div class="col-2">
+                  <a href="{% url 'booking_form' %}?id={{ d.id }}" class="btn btn-outline-dark select-destination"> 
+                    <i class="bi bi-plus-lg"></i> 
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -103,24 +108,18 @@
     </div>
   </div>
 </section>
-<!-- ----------------------------------------------------------- -->
- 
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  // Set localStorage when clicking the add button
-  document.querySelectorAll('a[href*="forms"]').forEach(link => {
-    link.addEventListener('click', function(e) {
-      const card = this.closest('.card');
-      if (card) {
-        const destination = card.getAttribute('data-destination');
-        const price = card.getAttribute('data-price');
-        const seats = card.getAttribute('data-seats');
-        localStorage.setItem('selectedDestination', destination);
-        localStorage.setItem('selectedPrice', price);
-        localStorage.setItem('selectedSeats', seats);
-      }
+// Save clicked card details to localStorage
+document.querySelectorAll('.select-destination').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        const card = this.closest('.card');
+        if (!card) return;
+        localStorage.setItem('selectedDestination', card.getAttribute('data-destination'));
+        localStorage.setItem('selectedPrice', card.getAttribute('data-price'));
+        localStorage.setItem('selectedSeats', card.getAttribute('data-seats'));
+        localStorage.setItem('selectedDestinationId', card.getAttribute('data-id'));
     });
-  });
 });
 </script>
 
