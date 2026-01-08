@@ -28,14 +28,11 @@ def booking_form(request):
     destination_id = request.GET.get('id') or request.POST.get('destination')
     if not destination_id:
         return redirect('home')
-
     destination = get_object_or_404(Destination, id=destination_id)
-
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
         address = request.POST.get('address')
         phone = request.POST.get('phone')
-
         try:
             guest = int(request.POST.get('guest', 1))
             price_per_person = float(request.POST.get('price', 0))
@@ -60,10 +57,8 @@ def booking_form(request):
                     'destination': destination,
                     'error': 'Not enough seats available'
                 })
-
             destination.seats -= guest
             destination.save()
-
             Booking.objects.create(
                 full_name=full_name,
                 address=address,
@@ -72,9 +67,7 @@ def booking_form(request):
                 guest=guest,
                 total_price=total_price
             )
-
-        return redirect('home')
-
+        return redirect('travel_card')
     return render(request, 'form.html', {'destination': destination})
 
 
@@ -90,7 +83,7 @@ def travel_card(request):
     return render(request, 'blog.html', {'destination': destination})
 
 
-def booking_forms(request):
+def booking_forms(request, id):
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
         address = request.POST.get('address')
@@ -114,9 +107,40 @@ def booking_forms(request):
 
         # ✅ Success message
         messages.success(request, f"Booking successful for {destination.name}!")
-        return redirect('home')  # redirect করলে message দেখাবে
+        return redirect('travel_card')  # redirect করলে message দেখাবে
 
     return render(request, 'booking_form.html')
 
 
+
+def form_booking(request, id):
+    destination = get_object_or_404(Destination, id=id)
+    if request.method == "POST":
+        full_name = request.POST.get('full_name')
+        address = request.POST.get('address')
+        phone = request.POST.get('phone')
+        guest = int(request.POST.get('guest'))
+        total_price = float(request.POST.get('price'))
+
+        if guest > destination.seats:
+            return render(request, 'form.html', {
+                'destination': destination,
+                'error': 'Not enough seats available'
+            })
+        # save booking
+        Booking.objects.create(
+            full_name=full_name,
+            address=address,
+            phone=phone,
+            destination=destination,
+            guest=guest,
+            total_price=total_price
+        )
+        # reduce seats
+        destination.seats -= guest
+        destination.save()
+        return redirect('travel_card')
+    return render(request, 'form.html', {
+        'destination': destination
+    })
 

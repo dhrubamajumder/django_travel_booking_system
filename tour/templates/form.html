@@ -8,6 +8,7 @@
         <h3>Travel Booking Form</h3>
       </div>
       <div class="card-body">
+
         {% if error %}
           <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
@@ -33,29 +34,32 @@
             <input type="tel" name="phone" class="form-control" required>
           </div>
 
-          <!-- Destination -->
+          <!-- Destination (auto-fill) -->
           <div class="mb-3">
             <label>Destination</label>
-            <input type="text" name="destination_name" id="destination" class="form-control" readonly required>
-            <input type="hidden" name="destination" id="destination_id">
+            <input type="text" class="form-control" value="{{ destination.name }}" readonly>
+            <input type="hidden" name="destination" value="{{ destination.id }}">
           </div>
 
           <!-- Guest & Price -->
           <div class="row">
             <div class="col-6 mb-3">
               <label>Guest</label>
-              <input type="number" name="guest" id="guest" class="form-control" min="1" value="1" required>
+              <input type="number" name="guest" id="guest" class="form-control" 
+                     min="1" max="{{ destination.seats }}" value="1" required>
             </div>
+
             <div class="col-6 mb-3">
               <label>Price</label>
-              <input type="number" name="price" id="price" class="form-control" readonly required>
+              <input type="number" name="price" id="price" class="form-control" 
+                     value="{{ destination.price }}" readonly required>
             </div>
           </div>
 
           <!-- Submit & Back -->
           <div class="text-center">
             <button type="submit" class="btn btn-success">Book Now</button>
-            <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+            <a href="{% url 'travel_card' %}" class="btn btn-secondary">Back</a>
           </div>
 
         </form>
@@ -64,40 +68,16 @@
   </div>
 </div>
 
+<!-- JS: Price auto-update on guest change -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const destinationInput = document.getElementById("destination");
-  const destinationIdInput = document.getElementById("destination_id");
-  const priceInput = document.getElementById("price");
-  const guestInput = document.getElementById("guest");
+const guestInput = document.getElementById("guest");
+const priceInput = document.getElementById("price");
+const basePrice = {{ destination.price }};
 
-  let currentPrice = 0;
-
-  // Load from localStorage
-  const storedDestination = localStorage.getItem('selectedDestination');
-  const storedPrice = localStorage.getItem('selectedPrice');
-  const storedSeats = localStorage.getItem('selectedSeats');
-  const storedId = localStorage.getItem('selectedDestinationId');
-
-  if (storedDestination) destinationInput.value = storedDestination;
-  if (storedPrice) {
-    currentPrice = parseInt(storedPrice);
-    priceInput.value = currentPrice * (parseInt(guestInput.value) || 1);
-  }
-  if (storedId) destinationIdInput.value = storedId;
-  if (storedSeats) guestInput.max = storedSeats;
-
-  // Remove after reading to avoid stale data
-  localStorage.removeItem('selectedDestination');
-  localStorage.removeItem('selectedPrice');
-  localStorage.removeItem('selectedSeats');
-  localStorage.removeItem('selectedDestinationId');
-
-  // Update price when guest changes
-  guestInput.addEventListener('input', function() {
-    const guests = parseInt(guestInput.value) || 1;
-    priceInput.value = currentPrice * guests;
-  });
+guestInput.addEventListener("input", function () {
+    let guests = parseInt(this.value) || 1;
+    if (guests > parseInt(this.max)) guests = this.max;
+    priceInput.value = basePrice * guests;
 });
 </script>
 

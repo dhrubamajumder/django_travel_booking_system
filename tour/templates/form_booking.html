@@ -1,0 +1,8 @@
+{% if destination %}
+  <h2>{{ destination.name }}</h2>
+  <p>{{ destination.days }} days tour</p>
+  <p>Seats: {{ destination.seats }}</p>
+  <p>Price: ৳{{ destination.price }}</p>
+
+  <input type="hidden" name="destination_id" value="{{ destination.id }}">
+{% endif %}

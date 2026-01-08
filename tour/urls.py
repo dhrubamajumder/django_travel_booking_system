@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 from django.urls import path
-from . views import home, slide, first, second, third, travel_card, booking_form , booked_list, booking_forms
+from . views import home, slide, first, second, third, travel_card, booking_form , booked_list, booking_forms, form_booking
 
 urlpatterns = [
     path('home/', home, name='home'),
@@ -16,4 +16,5 @@ urlpatterns = [
 
     path('bookings/', booking_forms, name='forms'),
     path('booked/', booked_list, name='booked_list'),
+    path('forms/<int:id>/', form_booking, name='form_booking'),
 ]

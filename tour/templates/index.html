@@ -60,12 +60,12 @@ section {
           </a>
         </li>
 
-        <li class="nav-item">
+        {% comment %} <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'booking_list' %}active{% endif %}"
             href="{% url 'booking_form' %}">
               Booking
           </a>
-        </li>
+        </li> {% endcomment %}
 
         <li class="nav-item">
           <a class="nav-link" href="{% url 'booked_list' %}">
