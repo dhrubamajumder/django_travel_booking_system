@@ -1,0 +1,14 @@
+{% extends 'boot.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 p-3  ">
+    <h1>{{ blog.title }}</h1>
+    <img src="{{ blog.image.url }}" class="img my-3" style="width: 40rem;">
+    <p><i class="bi bi-calendar"></i> {{ blog.created_at|date:"d-m-Y" }}</p>
+    <p><i class="bi bi-person"></i> {{ blog.author.username }}</p>
+    <p><b>Description : </b>{{ blog.description }}</p>
+
+    <a href="{% url 'blog_list' %}" class="btn btn-secondary">Back to Blogs</a>
+</div>
+{% endblock %}

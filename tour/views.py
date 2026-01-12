@@ -1,13 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Booking, Destination
+from .models import Booking, Destination, Blog_Booking , Blog
 from django.contrib import messages
 from django.db import transaction
 
+from django.contrib.auth.models import User
 
-# Create your views here.
+
 def home(request):
-    destination = Destination.objects.all()
+    query = request.GET.get('q', '')  
+    if query:
+        destination = Destination.objects.filter(name__icontains=query)
+    else:
+        destination = Destination.objects.all()
     return render(request, 'home.html', {'destination': destination})
+
 
 
 def slide(request):
@@ -49,7 +55,6 @@ def booking_form(request):
             })
 
         with transaction.atomic():
-            # Lock the row to avoid race conditions
             destination = Destination.objects.select_for_update().get(id=destination.id)
 
             if guest > destination.seats:
@@ -78,9 +83,9 @@ def booked_list(request):
     return render(request, 'booked_list.html', {'bookings': bookings})
 
 
-def travel_card(request):
-    destination = Destination.objects.all()
-    return render(request, 'blog.html', {'destination': destination})
+# def travel_card(request):
+#     destination = Destination.objects.all()
+#     return render(request, 'blog.html', {'destination': destination})
 
 
 def booking_forms(request, id):
@@ -105,9 +110,8 @@ def booking_forms(request, id):
             total_price=total_price
         )
 
-        # ✅ Success message
         messages.success(request, f"Booking successful for {destination.name}!")
-        return redirect('travel_card')  # redirect করলে message দেখাবে
+        return redirect('travel_card')  
 
     return render(request, 'booking_form.html')
 
@@ -143,4 +147,55 @@ def form_booking(request, id):
     return render(request, 'form.html', {
         'destination': destination
     })
+
+
+
+def create_blog(request):
+    authors = User.objects.all() 
+
+    if request.method == 'POST':
+        title = request.POST['title']
+        description = request.POST['description']
+        author_id = request.POST.get('author')
+        image = request.FILES.get('image')
+
+        Blog.objects.create(
+            title=title,
+            description=description,
+            image=image,
+            author_id=author_id
+        )
+        return redirect('travel_card')
+
+    return render(request, 'blog_form.html', {
+        'authors': authors
+    })
+
+
+
+def blog_list(request):
+    blogs = Blog.objects.all().order_by('-created_at')
+    return render(request, 'blog.html', {'blogs': blogs})
+
+
+
+def travel_card(request):
+    blogs = Blog.objects.all().order_by('-created_at')
+    destination = Destination.objects.all()
+    return render(request, 'footer.html', {'destination': destination, 'blogs': blogs})
+
+
+
+def blog_detail(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    return render(request, 'blog_detail.html', {'blog': blog})
+
+
+
+def delete_blog(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+
+    if request.user == blog.author or request.user.is_superuser:
+        blog.delete()
+    return redirect('blog_list')
 

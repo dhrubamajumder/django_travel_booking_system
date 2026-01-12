@@ -72,6 +72,7 @@
   </div>
 </section>
 
+
 <section id="events">
   <div class="content m-4">
       <h1 class="text-center" style="color: rgb(3, 3, 142);">Popular Destinations</h1><hr>
@@ -80,7 +81,7 @@
         <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
           <div class="card shadow h-100" data-id="{{ d.id }}" data-destination="{{ d.name }}" data-price="{{ d.price }}" data-seats="{{ d.seats }}">
             {% if d.image %}
-              <img src="{{ d.image.url }}" class="card-img-top" alt="{{ d.name }}">
+              <img src="{{ d.image.url }}" class="card-img-top" style="height: 18rem" alt="{{ d.name }}">
             {% endif %}
             <div class="card-body">
               <div class="row">
@@ -109,6 +110,7 @@
   </div>
 </section>
 
+
 <script>
 // Save clicked card details to localStorage
 document.querySelectorAll('.select-destination').forEach(btn => {
@@ -121,6 +123,38 @@ document.querySelectorAll('.select-destination').forEach(btn => {
         localStorage.setItem('selectedDestinationId', card.getAttribute('data-id'));
     });
 });
+
+// লাইভ সার্চ: টাইপ করার সাথে সাথে ফলাফল দেখাবে
+const searchInput = document.getElementById('searchInput');
+const destinationCards = document.querySelectorAll('.destination-card');
+
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase();
+  let anyVisible = false;
+
+  destinationCards.forEach(card => {
+    const name = card.querySelector('.card').dataset.destination.toLowerCase();
+    if (name.includes(query)) {
+      card.style.display = 'block';
+      anyVisible = true;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // যদি কোনো ফলাফল না থাকে, "কোনো গন্তব্য পাওয়া যায়নি" দেখাও
+  let noResults = document.getElementById('noResults');
+  if (!noResults) {
+    noResults = document.createElement('p');
+    noResults.id = 'noResults';
+    noResults.textContent = 'কোনো গন্তব্য পাওয়া যায়নি।';
+    noResults.classList.add('text-center', 'mt-3');
+    document.getElementById('destinationsRow').appendChild(noResults);
+  }
+  noResults.style.display = anyVisible ? 'none' : 'block';
+});
+
+
 </script>
 
 {% endblock %}

@@ -60,13 +60,6 @@ section {
           </a>
         </li>
 
-        {% comment %} <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'booking_list' %}active{% endif %}"
-            href="{% url 'booking_form' %}">
-              Booking
-          </a>
-        </li> {% endcomment %}
-
         <li class="nav-item">
           <a class="nav-link" href="{% url 'booked_list' %}">
             <i class="bi bi-check-circle"></i> Booked
@@ -76,13 +69,11 @@ section {
 
 
 
-      <div class="d-flex">
-        <input type="text"
-              id="searchInput"
-              class="form-control me-2"
-              placeholder="Search destination...">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </div>
+      <form method="get" action="{% url 'home' %}" class="d-flex m-2">
+          <input type="text" id="searchInput" name="q" class="form-control me-2" placeholder="Search destination..." value="{{ query }}">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+
 
     </div>
   </div>
